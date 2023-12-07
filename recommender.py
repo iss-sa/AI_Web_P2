@@ -3,7 +3,7 @@
 from flask import Flask, render_template
 from flask_user import login_required, UserManager
 
-from models import db, User, Movie, MovieGenre
+from models import db, User, Movie, MovieGenre, MovieLinks, MovieTags
 from read_data import check_and_read_data
 
 # Class-based application configuration
@@ -31,7 +31,6 @@ db.init_app(app)  # initialize database
 db.create_all()  # create database if necessary
 user_manager = UserManager(app, db, User)  # initialize Flask-User management
 
-
 @app.cli.command('initdb')
 def initdb_command():
     global db
@@ -54,6 +53,7 @@ def movies_page():
 
     # first 10 movies
     movies = Movie.query.limit(10).all()
+    links = MovieLinks.query.limit(10).all()
 
     # only Romance movies
     # movies = Movie.query.filter(Movie.genres.any(MovieGenre.genre == 'Romance')).limit(10).all()
@@ -64,7 +64,7 @@ def movies_page():
     #     .filter(Movie.genres.any(MovieGenre.genre == 'Horror')) \
     #     .limit(10).all()
 
-    return render_template("movies.html", movies=movies)
+    return render_template("movies.html", movies=movies, links=links)
 
 
 # Start development web server
