@@ -23,7 +23,7 @@ def check_and_read_data(db):
                         for genre in genres:  # add each genre to the movie_genre table
                             movie_genre = MovieGenre(movie_id=id, genre=genre)
                             db.session.add(movie_genre)
-                        #db.session.commit()  # save data to database
+                        db.session.commit()  # save data to database
 
                     except IntegrityError:
                         print("Ignoring duplicate movie: " + title)
@@ -46,7 +46,7 @@ def check_and_read_data(db):
                         timestamp = row[3]
                         tags = MovieTags(user_id=user_id, movie_id=movie_id, tag=tag, timestamp=timestamp)
                         db.session.add(tags)
-                        #db.session.commit() # save data to database
+                        db.session.commit() # save data to database
 
                     except IntegrityError:
                         print("Ignoring duplicate movie: " + title)

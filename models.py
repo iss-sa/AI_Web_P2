@@ -39,13 +39,15 @@ class MovieGenre(db.Model):
 
 class MovieTags(db.Model):
     __tablename__ = 'movie_tags'
-    user_id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer)
     movie_id = db.Column(db.Integer, db.ForeignKey('movies.id'), nullable=False)
-    tag = db.Column(db.String(100, collation='NOCASE'), nullable=False)
-    timestamp = db.Column(db.DateTime(timezone=True))
+    tag = db.Column(db.String(255), nullable=False, server_default='')
+    timestamp = db.Column(db.Integer, primary_key = True)
+    class Meta:
+        unique_together = (('user_id', 'timestamp', 'movie_id','tag'),)
 
 class MovieLinks(db.Model):
     __tablename__ = 'movie_links'
     movie_id = db.Column(db.Integer, db.ForeignKey('movies.id'), nullable=False, primary_key=True)
     imdb_id = db.Column(db.Integer)
-    tmdb_id = db.Column(db.Integer)
+    tmdb_id = db.Column(db.String)
