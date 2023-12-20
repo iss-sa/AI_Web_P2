@@ -14,8 +14,26 @@
                 </p>
             </div>
             <div class="panel-body">
-                {% for l in links %}<p> {{ l.imdb_id }}</p>{% endfor %} 
+                <p>
+                    {% for t in m.tags %}
+                        <span class="label label-default">{{ t.tag }}</span>
+                    {% endfor %}
+                </p>
             </div>
+
+            <script>document.write("https://www.themoviedb.org/movie/" + "blabla") </script>
+            <div class="panel-body"> 
+                {% for l in m.links %}
+                <script>document.write("https://www.themoviedb.org/movie/") </script>
+                <p>{{ url }} </p>
+                {% endfor %} 
+            </div>
+            <div class="panel-body">
+                {%for url in URLs%}
+                <a href={{url}}>{{url}}</a>
+                {%endfor%}
+            </div>
+
               <div class="panel-footer">Rate:
                   <a href="#" class="card-link">1</a>
                   <a href="#" class="card-link">2</a>
@@ -25,6 +43,7 @@
               </div>
         </div>
     {% endfor %}
+
 </div>
 
 {% endblock %}

@@ -53,7 +53,13 @@ def movies_page():
 
     # first 10 movies
     movies = Movie.query.limit(10).all()
-    links = MovieLinks.query.limit(10).all()
+    URLs = []
+    for m in movies:
+        for l in m.links:
+            num = l.tmdb_id
+            URLs.append("https://www.themoviedb.org/movie/"+num)
+
+    #links = MovieLinks.query.limit(10).all()
 
     # only Romance movies
     # movies = Movie.query.filter(Movie.genres.any(MovieGenre.genre == 'Romance')).limit(10).all()
@@ -64,9 +70,12 @@ def movies_page():
     #     .filter(Movie.genres.any(MovieGenre.genre == 'Horror')) \
     #     .limit(10).all()
 
-    return render_template("movies.html", movies=movies, links=links)
+    return render_template("movies.html", movies=movies, URLs = URLs)
 
 
 # Start development web server
 if __name__ == '__main__':
     app.run(port=5000, debug=True)
+
+
+#flask --app .\recommender.py initdb

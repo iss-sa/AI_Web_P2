@@ -40,11 +40,12 @@ def check_and_read_data(db):
             for row in reader:
                 if count > 0:
                     try:
+                        id = count
                         user_id = row[0]
                         movie_id = row[1]
                         tag = row[2]
                         timestamp = row[3]
-                        tags = MovieTags(user_id=user_id, movie_id=movie_id, tag=tag, timestamp=timestamp)
+                        tags = MovieTags(id = id, user_id=user_id, movie_id=movie_id, tag=tag, timestamp=timestamp)
                         db.session.add(tags)
                         db.session.commit() # save data to database
 
