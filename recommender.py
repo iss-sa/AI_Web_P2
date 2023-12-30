@@ -44,6 +44,11 @@ def home_page():
     # render home.html template
     return render_template("home.html")
 
+@app.route('/recommender')
+@login_required  # User must be authenticated
+def recommender_page():
+    genres = ["Adventure", "Horror", "Thriller"]
+    return render_template("recommender.html", genres=genres) 
 
 # The Members page is only accessible to authenticated users via the @login_required decorator
 @app.route('/movies')
@@ -59,6 +64,8 @@ def movies_page():
             num = l.tmdb_id
             URLs.append("https://www.themoviedb.org/movie/"+num)
 
+    mov_url = zip(movies, URLs)
+
     #links = MovieLinks.query.limit(10).all()
 
     # only Romance movies
@@ -70,7 +77,7 @@ def movies_page():
     #     .filter(Movie.genres.any(MovieGenre.genre == 'Horror')) \
     #     .limit(10).all()
 
-    return render_template("movies.html", movies=movies, URLs = URLs)
+    return render_template("movies.html", movies=mov_url) 
 
 
 # Start development web server

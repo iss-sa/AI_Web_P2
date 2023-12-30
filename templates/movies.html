@@ -3,35 +3,26 @@
 <div class="container">
     <h2>Movies</h2>
 
-    {% for m in movies %}
+    {% for m in movies %} 
         <div class="panel panel-default">
-            <div class="panel-heading"><b>{{ m.title }}</b></div>
+            <div class="panel-heading"><b>{{ m[0].title }}</b></div>
             <div class="panel-body">
                 <p>
-                    {% for g in m.genres %}
+                    {% for g in m[0].genres %}
                         <span class="label label-default">{{ g.genre }}</span>
                     {% endfor %}
                 </p>
             </div>
             <div class="panel-body">
                 <p>
-                    {% for t in m.tags %}
+                    {% for t in m[0].tags %}
                         <span class="label label-default">{{ t.tag }}</span>
                     {% endfor %}
                 </p>
             </div>
-
-            <script>document.write("https://www.themoviedb.org/movie/" + "blabla") </script>
-            <div class="panel-body"> 
-                {% for l in m.links %}
-                <script>document.write("https://www.themoviedb.org/movie/") </script>
-                <p>{{ url }} </p>
-                {% endfor %} 
-            </div>
+            
             <div class="panel-body">
-                {%for url in URLs%}
-                <a href={{url}}>{{url}}</a>
-                {%endfor%}
+                <a href={{m[1]}}>{{m[1]}}</a>
             </div>
 
               <div class="panel-footer">Rate:

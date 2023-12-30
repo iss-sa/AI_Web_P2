@@ -1,0 +1,19 @@
+{% extends "flask_user_layout.html" %}
+{% block content %}
+<div class="container">
+    <h2>Recommender</h2>
+</div>
+<div><b>Q. Which Genres do you like most? Pick as many as you want</b></div>
+
+{% for genre in genres %}
+<div id="options">
+    <label>{{genre}}
+    <input type="checkbox" name="checkbox">
+    </label>
+</div>
+{% endfor %}
+
+<div id="Next">
+    <button>Next</button>
+</div>
+{% endblock %}
