@@ -18,9 +18,10 @@ matrix = df.pivot_table(index = 'userId', columns = 'movieId', values = 'rating'
 
 #we can normalize ratings 
 # Normalize user-item matrix
-#matrix_norm = matrix.subtract(matrix.mean(axis=1), axis = 'rows')
-#user similarity matrix using Pearson correlation
+matrix = matrix.subtract(matrix.mean(axis=1), axis = 'rows')
 
+
+#user similarity matrix using Pearson correlation
 user_similarity = matrix.T.corr()
 
 #if we want to use cosine similarrity use
@@ -83,6 +84,5 @@ item_score = pd.DataFrame(item_score.items(), columns=['movie', 'movie_score'])
 ranked_item_score = item_score.sort_values(by='movie_score', ascending=False)
 # Select top m movies
 m = 10
+print("top {m} movies for user {user}".format(m=m, user=picked_userid))
 print(ranked_item_score.head(m))
-
-
