@@ -1,6 +1,8 @@
 import csv
 from sqlalchemy.exc import IntegrityError
-from models import Movie, MovieGenre, MovieLinks, MovieTags, MovieRatings
+from models import Movie, MovieGenre, MovieLinks, MovieTags, MovieRatings, User
+
+import pandas as pd
 
 def check_and_read_data(db):
     # check if we have movies in the database
@@ -102,3 +104,23 @@ def check_and_read_data(db):
                 count += 1
                 if count % 100 == 0:
                     print(count, " ratings read")
+
+
+def database_pd_matrix(db):
+    data_r = ( db.session.query(MovieRatings.user_id, MovieRatings.movie_id, MovieRatings.rating, MovieRatings.timestamp)
+        .all()
+    )
+    
+    data_m = ( db.session.query(Movie.id, Movie.title)
+        .all()
+    )
+
+    # convert to Pandas DataFrame
+    df_ratings = pd.DataFrame(data_r, columns=['userId', 'movieId', 'rating', 'timestamp'])
+    df_movies = pd.DataFrame(data_m, columns=['movieId', 'title'])
+
+    df = pd.merge(df_ratings, df_movies, on = 'movieId', how = 'inner')
+
+    # create user-movie matrix with missing values = 0
+    user_movie_matrix = df.pivot_table(index='userId', columns='movieId', values='rating')
+    return user_movie_matrix

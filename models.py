@@ -3,6 +3,7 @@ from flask_user import UserMixin
 
 db = SQLAlchemy()
 
+
 # Define the User data-model.
 # NB: Make sure to add flask_user UserMixin as this adds additional fields and properties required by Flask-User
 class User(db.Model, UserMixin):
@@ -20,7 +21,6 @@ class User(db.Model, UserMixin):
     first_name = db.Column(db.String(100, collation='NOCASE'), nullable=False, server_default='')
     last_name = db.Column(db.String(100, collation='NOCASE'), nullable=False, server_default='')
 
-
 class Movie(db.Model):
     __tablename__ = 'movies'
     id = db.Column(db.Integer, primary_key=True)
@@ -30,13 +30,11 @@ class Movie(db.Model):
     links = db.relationship('MovieLinks', backref='movie', lazy=True)
     ratings = db.relationship('MovieRatings', backref='movie', lazy=True)
 
-
 class MovieGenre(db.Model):
     __tablename__ = 'movie_genres'
     id = db.Column(db.Integer, primary_key=True)
     movie_id = db.Column(db.Integer, db.ForeignKey('movies.id'), nullable=False)
     genre = db.Column(db.String(255), nullable=False, server_default='')
-
 
 class MovieTags(db.Model):
     __tablename__ = 'movie_tags'
@@ -45,7 +43,6 @@ class MovieTags(db.Model):
     movie_id = db.Column(db.Integer, db.ForeignKey('movies.id'), nullable=False)
     tag = db.Column(db.String(255), nullable=False, server_default='')
     timestamp = db.Column(db.Integer)
-
 
 class MovieLinks(db.Model):
     __tablename__ = 'movie_links'

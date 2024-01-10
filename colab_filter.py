@@ -6,7 +6,18 @@ import scipy.stats
 # Similarity
 from sklearn.metrics.pairwise import cosine_similarity
 
-def collab_filter(picked_userid=1, n=10, user_similarity_threshold=0.3, m=10, p_corr=True):
+#read in ratings and movies
+ratings = pd.read_csv('data/ratings.csv')
+movies = pd.read_csv('data/movies.csv')
+
+#merge ratings and movie datasets
+df = pd.merge(ratings, movies, on = 'movieId', how = 'inner')
+
+#can change movieId to title thats why movies are read in the beginning
+matrix = df.pivot_table(index = 'userId', columns = 'movieId', values = 'rating')
+print(matrix)
+
+def collab_filter(picked_userid=1, n=10, user_similarity_threshold=0.3, m=10, p_corr=True, matrix=matrix):
   """generates movie recommendations for a given user
   
       picked_userid : the user who receives the recommendations
@@ -16,16 +27,7 @@ def collab_filter(picked_userid=1, n=10, user_similarity_threshold=0.3, m=10, p_
       p_corr : pearson correlation if True, else cosine similarity is used
       """
 
-  #read in ratings and movies
-  ratings = pd.read_csv('data/ratings.csv')
-  movies = pd.read_csv('data/movies.csv')
-
-  #merge ratings and movie datasets
-  df = pd.merge(ratings, movies, on = 'movieId', how = 'inner')
-
-  #can change movieId to title thats why movies are read in the beginning
-  matrix = df.pivot_table(index = 'userId', columns = 'movieId', values = 'rating')
-
+  print(matrix)
   #we can normalize ratings 
   # Normalize user-item matrix
   matrix = matrix.subtract(matrix.mean(axis=1), axis = 'rows')
@@ -35,7 +37,7 @@ def collab_filter(picked_userid=1, n=10, user_similarity_threshold=0.3, m=10, p_
     user_similarity = matrix.T.corr()
   else:
     #if we want to use cosine similarrity 
-    user_similarity_cosine = cosine_similarity(matrix.fillna(0))
+    user_similarity = cosine_similarity(matrix.fillna(0))
 
 
   #example on how to find similar user

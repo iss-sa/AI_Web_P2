@@ -1,10 +1,12 @@
 # Contains parts from: https://flask-user.readthedocs.io/en/latest/quickstart_app.html
 
-from flask import Flask, render_template
-from flask_user import login_required, UserManager
+from flask import Flask, render_template, request
+from flask_user import login_required, UserManager, current_user
 
-from models import db, User, Movie, MovieGenre, MovieLinks, MovieTags
-from read_data import check_and_read_data
+from models import db, User, Movie, MovieGenre, MovieLinks, MovieTags, MovieRatings
+from read_data import check_and_read_data, database_pd_matrix
+from colab_filter import collab_filter
+
 
 # Class-based application configuration
 class ConfigClass(object):
@@ -31,6 +33,7 @@ db.init_app(app)  # initialize database
 db.create_all()  # create database if necessary
 user_manager = UserManager(app, db, User)  # initialize Flask-User management
 
+
 @app.cli.command('initdb')
 def initdb_command():
     global db
@@ -47,6 +50,10 @@ def home_page():
 @app.route('/recommender')
 @login_required  # User must be authenticated
 def recommender_page():
+    # matrix for collab_filter
+    data_m = database_pd_matrix(db)
+    collab_filter(picked_userid=1, n=10, user_similarity_threshold=0.3, m=10, p_corr=True, matrix=data_m)
+
     genres = ["Adventure", "Horror", "Thriller"]
     return render_template("recommender.html", genres=genres) 
 
@@ -79,6 +86,17 @@ def movies_page():
 
     return render_template("movies.html", movies=mov_url) 
 
+@app.route('/rate', methods=['POST'])
+@login_required  # User must be authenticated
+def rate():
+    #id = 
+    movieid = request.form.get('movieid')
+    rating = request.form.get('rating')
+    userid = current_user.id
+    db.session.add(MovieRatings(user_id=userid, movie_id=movieid, rating=rating))
+    db.session.commit()
+    print("Rate {} for {} by {}".format(rating, movieid, userid))
+    return render_template("rated.html", rating=rating)
 
 # Start development web server
 if __name__ == '__main__':
