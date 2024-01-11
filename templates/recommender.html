@@ -5,15 +5,19 @@
 </div>
 <div><b>Q. Which Genres do you like most? Pick as many as you want</b></div>
 
+<form id="genre-list">
 {% for genre in genres %}
 <div id="options">
-    <label>{{genre}}
-    <input type="checkbox" name="checkbox">
+    <label>
+    <input type="checkbox" name="checkbox" value = {{genre}} ng-modal="c.val"> {{genre}}
     </label>
+    <pre> The checkbox vlaue is </pre>
 </div>
 {% endfor %}
+</form>
 
-<div id="Next">
-    <button>Next</button>
+<div>
+    <button type="submit">Submit</button>
 </div>
+
 {% endblock %}

@@ -15,7 +15,7 @@ df = pd.merge(ratings, movies, on = 'movieId', how = 'inner')
 
 #can change movieId to title thats why movies are read in the beginning
 matrix = df.pivot_table(index = 'userId', columns = 'movieId', values = 'rating')
-print(matrix)
+#print(matrix)
 
 def collab_filter(picked_userid=1, n=10, user_similarity_threshold=0.3, m=10, p_corr=True, matrix=matrix):
   """generates movie recommendations for a given user

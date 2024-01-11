@@ -97,6 +97,8 @@ def check_and_read_data(db):
                         db.session.add(ratings)
                         db.session.commit() # save data to database
 
+                        add_rating_user(db.session, user_id=row[0])
+
                     except IntegrityError:
                         print("Ignoring duplicate movie: " + title)
                         db.session.rollback()
@@ -105,6 +107,12 @@ def check_and_read_data(db):
                 if count % 100 == 0:
                     print(count, " ratings read")
 
+def add_rating_user(session, user_id):
+    """ Adds the users from the ratings.csv file. """
+
+    added_user = User(id=user_id, username= str("User"+user_id))
+    session.add(added_user)
+    session.commit()
 
 def database_pd_matrix(db):
     data_r = ( db.session.query(MovieRatings.user_id, MovieRatings.movie_id, MovieRatings.rating, MovieRatings.timestamp)

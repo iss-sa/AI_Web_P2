@@ -50,11 +50,10 @@ def home_page():
 @app.route('/recommender')
 @login_required  # User must be authenticated
 def recommender_page():
-    # matrix for collab_filter
-    data_m = database_pd_matrix(db)
-    collab_filter(picked_userid=1, n=10, user_similarity_threshold=0.3, m=10, p_corr=True, matrix=data_m)
+    
+    genres = db.session.query(MovieGenre.genre).distinct().all()
+    genres.pop()
 
-    genres = ["Adventure", "Horror", "Thriller"]
     return render_template("recommender.html", genres=genres) 
 
 # The Members page is only accessible to authenticated users via the @login_required decorator
@@ -85,6 +84,27 @@ def movies_page():
     #     .limit(10).all()
 
     return render_template("movies.html", movies=mov_url) 
+
+@app.route('/recMovies')
+@login_required  # User must be authenticated
+def recommended_movies():
+    # matrix for collab_filter
+    data_m = database_pd_matrix(db)
+    picked_user = 1
+    df_movies = collab_filter(picked_userid=picked_user, n=10, user_similarity_threshold=0.3, m=10, p_corr=True, matrix=data_m)
+    list_movie_ids = df_movies["movie"]
+    movies = []
+    for m_id in list_movie_ids:
+        movies.append(Movie.query.filter(Movie.id == m_id).all())
+
+    URLs = []
+    for m in movies:
+        for l in m.links:
+            num = l.tmdb_id
+            URLs.append("https://www.themoviedb.org/movie/"+num)
+
+    mov_url = zip(movies, URLs)
+    return render_template("rec_movies.html", list_movies=mov_url)
 
 @app.route('/rate', methods=['POST'])
 @login_required  # User must be authenticated
