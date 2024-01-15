@@ -92,19 +92,19 @@ def recommended_movies():
     data_m = database_pd_matrix(db)
     picked_user = 1
     df_movies = collab_filter(picked_userid=picked_user, n=10, user_similarity_threshold=0.3, m=10, p_corr=True, matrix=data_m)
-    list_movie_ids = df_movies["movie"]
+    list_movie_ids = df_movies["movie"][:10]
     movies = []
     for m_id in list_movie_ids:
-        movies.append(Movie.query.filter(Movie.id == m_id).all())
-
-    URLs = []
+        movies.append(Movie.query.filter_by(id = m_id).all())
+    print(movies)
+    """    URLs = []
     for m in movies:
         for l in m.links:
             num = l.tmdb_id
-            URLs.append("https://www.themoviedb.org/movie/"+num)
+            URLs.append("https://www.themoviedb.org/movie/"+num)"""
 
-    mov_url = zip(movies, URLs)
-    return render_template("rec_movies.html", list_movies=mov_url)
+    #mov_url = zip(movies, URLs)
+    return render_template("rec_movies.html", list_movies=movies)
 
 @app.route('/rate', methods=['POST'])
 @login_required  # User must be authenticated
