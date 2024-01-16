@@ -53,7 +53,7 @@ def recommender_page():
     
     genres = db.session.query(MovieGenre.genre).distinct().all()
     genres.pop()
-
+    
     return render_template("recommender.html", genres=genres) 
 
 # The Members page is only accessible to authenticated users via the @login_required decorator
@@ -95,16 +95,16 @@ def recommended_movies():
     list_movie_ids = df_movies["movie"][:10]
     movies = []
     for m_id in list_movie_ids:
-        movies.append(Movie.query.filter_by(id = m_id).all())
-    print(movies)
-    """    URLs = []
+        movies.append(Movie.query.get(m_id))
+
+    URLs = []
     for m in movies:
         for l in m.links:
             num = l.tmdb_id
-            URLs.append("https://www.themoviedb.org/movie/"+num)"""
+            URLs.append("https://www.themoviedb.org/movie/"+num)
 
-    #mov_url = zip(movies, URLs)
-    return render_template("rec_movies.html", list_movies=movies)
+    mov_url = zip(movies, URLs)
+    return render_template("rec_movies.html", movies=mov_url)
 
 @app.route('/rate', methods=['POST'])
 @login_required  # User must be authenticated

@@ -27,7 +27,7 @@ def collab_filter(picked_userid=1, n=10, user_similarity_threshold=0.3, m=10, p_
       p_corr : pearson correlation if True, else cosine similarity is used
       """
 
-  print(matrix)
+  
   #we can normalize ratings 
   # Normalize user-item matrix
   matrix = matrix.subtract(matrix.mean(axis=1), axis = 'rows')

@@ -5,19 +5,49 @@
 </div>
 <div><b>Q. Which Genres do you like most? Pick as many as you want</b></div>
 
-<form id="genre-list">
-{% for genre in genres %}
-<div id="options">
-    <label>
-    <input type="checkbox" name="checkbox" value = {{genre}} ng-modal="c.val"> {{genre}}
-    </label>
-    <pre> The checkbox vlaue is </pre>
-</div>
-{% endfor %}
+<form action="/recommender" method="get">
+
+    <div class="options">
+        <input type="checkbox" value = "Adventure" name="choice"> Adventure <br>
+        <input type="checkbox" value = "Animation" name="choice"> Animation <br>
+        <input type="checkbox" value = "Children" name="choice"> Children <br>
+        <input type="checkbox" value = "Comedy" name="choice"> Comedy <br>
+        <input type="checkbox" value = "Fantasy" name="choice"> Fantasy <br>
+        <input type="checkbox" value = "Romance" name="choice"> Romance <br>
+        <input type="checkbox" value = "Drama" name="choice"> Drama <br>
+        <input type="checkbox" value = "Action" name="choice"> Action <br>
+        <input type="checkbox" value = "Crime" name="choice"> Crime <br>
+        <input type="checkbox" value = "Thriller" name="choice"> Thriller <br>
+        <input type="checkbox" value = "Horror" name="choice"> Horror <br>
+        <input type="checkbox" value = "Mystery" name="choice"> Mystery <br>
+        <input type="checkbox" value = "Sci-Fi" name="choice"> Sci-Fi <br>
+        <input type="checkbox" value = "War" name="choice"> War <br>
+        <input type="checkbox" value = "Musical" name="choice"> Musical <br>
+        <input type="checkbox" value = "Documentary" name="choice"> Documentary <br>
+        <input type="checkbox" value = "Film-Noir" name="choice"> Film-Noir <br>
+        <input type="checkbox" value = "Western" name="choice"> Western <br>
+        <input type="checkbox" value = "IMAX" name="choice"> IMAX <br>
+    </div>
+    <button type="submit">Submit</button>
 </form>
 
-<div>
-    <button type="submit">Submit</button>
-</div>
+
+<script>
+    const form = document.querySelector('form');
+
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        let options = [];
+        document.querySelectorAll('[type="checkbox"]').forEach(item => {
+            if (item.checked === true) {
+                options.push(item.value);
+            }
+        })
+
+        console.log(options);
+    })
+
+</script>
 
 {% endblock %}
