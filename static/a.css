@@ -1,0 +1,148 @@
+:root {
+  --main-text: hsl(0, 0%, 80%);
+}
+
+a {
+  text-decoration: none;
+  color: currentColor;
+}
+
+a:hover {
+  text-decoration: none;
+  color: hsl(0, 0%, 50%);
+}
+
+a:hover {
+  text-decoration: none;
+  cursor: pointer;
+}
+
+body {
+  background-color: #101010;
+  color: var(--main-text);
+  font-family: 'Roboto', sans-serif !important;
+}
+
+.border-r {
+  border-right: 1px solid #333;
+}
+
+.card-tag {
+  padding: .5em;
+  font-weight: bold;
+  font-size: 1.5rem;
+  background-color: rgb(255 0 255 / 0.1);
+  border-radius: .25em;
+}
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  width: -webkit-fill-available;
+  background-color: hsl(0 0% 5% / 1);
+  padding-bottom: .5em;
+}
+
+.footer-content {
+  padding: .25em;
+}
+
+.home-menu {
+  margin-top: 1em;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+.image-full-cover {
+  background-position: center !important;
+  background-size: cover !important;
+}
+
+.main {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  margin-bottom: 2em;
+}
+
+.menu-card {
+  margin: .5em;
+  min-height: 200px;
+  border: 1px solid #333;
+  border-radius: 0.25em;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  content-visibility: auto;
+}
+
+.nav {
+  padding: .75em;
+  padding-left: 2em;
+  padding-right: 2em;
+}
+
+.span-1 {
+  grid-column: span 1;
+}
+
+.span-2 {
+  grid-column: span 2;
+}
+
+.span-r-2 {
+  grid-row: span 2;
+}
+
+.panel {
+  background-color: hsl(0 0% 5% / 1);
+  border-color: #333;
+}
+
+.panel-heading {
+  color: var(--main-text) !important;
+  background-color: hsl(0 0% 5% / 1) !important;
+  border-color: #333 !important;
+}
+
+.label {
+  color: var(--main-text);
+  background-color: hsl(0 0% 10% / 1);
+}
+
+.panel-footer {
+  background-color: hsl(0 0% 5% / 1) !important;
+  border-color: #333 !important;
+}
+
+.movie-rating {
+  font-size: 1.1em;
+}
+
+.movie-rating>.rating-star {
+  color: hsl(60 100% 75% / 1);
+}
+
+.movie-rating>.rating-star:hover~.rating-star {
+  color: var(--main-text);
+}
+
+.rating-star {
+  cursor: pointer;
+}
+
+.genre-picker {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.genre-picker-container {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+}

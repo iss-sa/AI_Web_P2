@@ -1,0 +1,81 @@
+{% extends "flask_user_layout.html" %}
+{% block content %}
+<div class="container">
+    <h2>Movies</h2>
+
+    {% for m in movies %}
+    <div class="panel panel-default">
+        <div class="panel-heading"><b>{{ m[0].title }}</b></div>
+        <div class="panel-body">
+            Genres:
+            <p>
+                {% for g in m[0].genres %}
+                <span class="label label-default">{{ g.genre }}</span>
+                {% endfor %}
+            </p>
+        </div>
+        <div class="panel-body">
+            Tags:
+            <p>
+                {% for t in m[0].tags %}
+                <span class="label label-default">{{ t.tag }}</span>
+                {% endfor %}
+            </p>
+        </div>
+
+        <div class="panel-body">
+            <a href={{m[1]}}>{{m[1]}}</a>
+        </div>
+
+        <div class="panel-footer movie-rating">
+            Rate:
+            {% for i in range(5) %}
+            <span class="rating-star" data-rating="{{ i+1 }}" data-movieid="{{ m[0].id }}">
+                <i class="fa fa-star" aria-hidden="true"></i>
+            </span>
+            {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<script>
+    // Function to handle the click event on any rating link
+    function rateMovie(event) {
+        event.preventDefault(); // Prevent the default anchor action
+
+        var movieid = this.getAttribute('data-movieid');
+        var rating = this.getAttribute('data-rating');
+        var elem = this;
+
+        if (!isFinite(parseInt(movieid)) || !isFinite(parseFloat(rating))) {
+            alert("Fix your code.");
+        }
+
+        // Create an AJAX request
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '/rate', true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+        // Handle the response
+        xhr.onload = function () {
+            if (xhr.status === 200) {
+                // Replace the entire div with the response
+                elem.parentElement.innerHTML = xhr.responseText;
+            } else {
+                alert('Request failed. Returned status of ' + xhr.status);
+            }
+        };
+
+        // Send the request with the movie ID and the rating
+        xhr.send('movieid=' + movieid + '&rating=' + rating);
+    }
+
+    // Attach the event listener to each rating link
+    var links = document.querySelectorAll('.movie-rating .rating-star');
+    for (var i = 0; i < links.length; i++) {
+        links[i].addEventListener('click', rateMovie);
+    }
+</script>
+
+{% endblock %}
