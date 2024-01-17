@@ -1,6 +1,6 @@
 # Contains parts from: https://flask-user.readthedocs.io/en/latest/quickstart_app.html
 
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, send_from_directory
 from flask_user import login_required, UserManager, current_user
 
 from models import db, User, Movie, MovieGenre, MovieLinks, MovieTags, MovieRatings
@@ -47,14 +47,18 @@ def home_page():
     # render home.html template
     return render_template("home.html")
 
-@app.route('/recommender')
+@app.route('/recommender', methods=["GET", "POST"])
 @login_required  # User must be authenticated
 def recommender_page():
     
     genres = db.session.query(MovieGenre.genre).distinct().all()
     genres.pop()
+    genres = [genre[0] for genre in genres]
     
-    return render_template("recommender.html", genres=genres) 
+    checked_genres = request.form.get('checked')
+    print("checked genres = ", checked_genres)
+    
+    return render_template("recommender.html", genres=genres)
 
 # The Members page is only accessible to authenticated users via the @login_required decorator
 @app.route('/movies')
@@ -64,6 +68,16 @@ def movies_page():
 
     # first 10 movies
     movies = Movie.query.limit(10).all()
+
+    # LIEBER JULIUS: WIR WOLLEN HIER DIE GENRES HABEN VON RECOMMENDER PAGE für die query <3
+    # checked_boxes = HIER GENRE LISTE
+    # movies = Movie.query\
+    #     .filter(Movie.genres.any(MovieGenre.genre == checked_boxes[0])) \
+    #     .filter(Movie.genres.any(MovieGenre.genre == checked_boxes[1])) \
+    #     .filter(Movie.genres.any(MovieGenre.genre == checked_boxes[2])) \
+    #     .limit(20).all()
+    # DANKE!!!
+
     URLs = []
     for m in movies:
         for l in m.links:
@@ -71,32 +85,31 @@ def movies_page():
             URLs.append("https://www.themoviedb.org/movie/"+num)
 
     mov_url = zip(movies, URLs)
-
-    #links = MovieLinks.query.limit(10).all()
-
-    # only Romance movies
-    # movies = Movie.query.filter(Movie.genres.any(MovieGenre.genre == 'Romance')).limit(10).all()
-
-    # only Romance AND Horror movies
-    # movies = Movie.query\
-    #     .filter(Movie.genres.any(MovieGenre.genre == 'Romance')) \
-    #     .filter(Movie.genres.any(MovieGenre.genre == 'Horror')) \
-    #     .limit(10).all()
 
     return render_template("movies.html", movies=mov_url) 
 
 @app.route('/recMovies')
 @login_required  # User must be authenticated
 def recommended_movies():
-    # matrix for collab_filter
+    """user_ratings = (
+        db.session.query(MovieRatings)
+        .filter(MovieRatings.user_id == current_user.id)
+        .all()
+    )
+    # check if the user has rated movies already
+    if len(user_ratings)> 0: """ 
+        # matrix for collab_filter
     data_m = database_pd_matrix(db)
-    picked_user = 1
+    picked_user = current_user.id
     df_movies = collab_filter(picked_userid=picked_user, n=10, user_similarity_threshold=0.3, m=10, p_corr=True, matrix=data_m)
     list_movie_ids = df_movies["movie"][:10]
     movies = []
     for m_id in list_movie_ids:
         movies.append(Movie.query.get(m_id))
-
+        #movies.append(Movie.query.filter(Movie.id == m_id).one())
+    """else:
+        movies = Movie.query.limit(10).all()"""
+        
     URLs = []
     for m in movies:
         for l in m.links:
@@ -104,12 +117,11 @@ def recommended_movies():
             URLs.append("https://www.themoviedb.org/movie/"+num)
 
     mov_url = zip(movies, URLs)
-    return render_template("rec_movies.html", movies=mov_url)
+    return render_template("movies.html", movies=mov_url)
 
 @app.route('/rate', methods=['POST'])
 @login_required  # User must be authenticated
 def rate():
-    #id = 
     movieid = request.form.get('movieid')
     rating = request.form.get('rating')
     userid = current_user.id
@@ -118,9 +130,12 @@ def rate():
     print("Rate {} for {} by {}".format(rating, movieid, userid))
     return render_template("rated.html", rating=rating)
 
+@app.route('/static/<path:path>')
+def send_report(path):
+    return send_from_directory('static', path)
+
 # Start development web server
 if __name__ == '__main__':
     app.run(port=5000, debug=True)
-
 
 #flask --app .\recommender.py initdb

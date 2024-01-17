@@ -3,51 +3,69 @@
 <div class="container">
     <h2>Recommender</h2>
 </div>
-<div><b>Q. Which Genres do you like most? Pick as many as you want</b></div>
+<div><b>Q. Which Genres do you like most? Only 3 Genres will be considered. </b></div>
+<div><b>Make sure you save your answer, before you click on "Next"! </b></div>
 
-<form action="/recommender" method="get">
+<div class="genre-picker-container">
+    <iframe name="form-void" style="display:none;"></iframe>
+    <form class="genre-picker" target="form-void" onsubmit="getRecommendations()">
+        {% for genre in genres %}
+        <label>
+            <input type="checkbox" name="{{ genre }}"> {{genre}}
+        </label>
+        {% endfor %}
+    </form>
+</div>
 
-    <div class="options">
-        <input type="checkbox" value = "Adventure" name="choice"> Adventure <br>
-        <input type="checkbox" value = "Animation" name="choice"> Animation <br>
-        <input type="checkbox" value = "Children" name="choice"> Children <br>
-        <input type="checkbox" value = "Comedy" name="choice"> Comedy <br>
-        <input type="checkbox" value = "Fantasy" name="choice"> Fantasy <br>
-        <input type="checkbox" value = "Romance" name="choice"> Romance <br>
-        <input type="checkbox" value = "Drama" name="choice"> Drama <br>
-        <input type="checkbox" value = "Action" name="choice"> Action <br>
-        <input type="checkbox" value = "Crime" name="choice"> Crime <br>
-        <input type="checkbox" value = "Thriller" name="choice"> Thriller <br>
-        <input type="checkbox" value = "Horror" name="choice"> Horror <br>
-        <input type="checkbox" value = "Mystery" name="choice"> Mystery <br>
-        <input type="checkbox" value = "Sci-Fi" name="choice"> Sci-Fi <br>
-        <input type="checkbox" value = "War" name="choice"> War <br>
-        <input type="checkbox" value = "Musical" name="choice"> Musical <br>
-        <input type="checkbox" value = "Documentary" name="choice"> Documentary <br>
-        <input type="checkbox" value = "Film-Noir" name="choice"> Film-Noir <br>
-        <input type="checkbox" value = "Western" name="choice"> Western <br>
-        <input type="checkbox" value = "IMAX" name="choice"> IMAX <br>
-    </div>
-    <button type="submit">Submit</button>
+<form action="/movies" method="GET" class="box">
+    <input type="submit" class="btn btn-default btn-primary" value="{%trans%}Save{%endtrans%}" name="checked_boxes">
+    <button type="submit" class="btn btn-default btn-primary" >Next</button>
 </form>
-
-
-<script>
-    const form = document.querySelector('form');
-
-    form.addEventListener('submit', (e) => {
-        e.preventDefault();
-
-        let options = [];
-        document.querySelectorAll('[type="checkbox"]').forEach(item => {
-            if (item.checked === true) {
-                options.push(item.value);
-            }
-        })
-
-        console.log(options);
-    })
-
-</script>
+    
 
 {% endblock %}
+
+{% block extra_js %}
+<script>
+    const checkboxes = document.querySelectorAll(".genre-picker>label>input");
+    $("input[type='submit']").click(submitGenres);
+
+    function submitGenres(e) {
+        e.preventDefault();
+        var checked = [];
+        for (var cb of checkboxes) {
+            if (cb.checked) {
+                checked.push(cb.name);
+            }
+        }
+
+        if (!checked.length) {
+            alert("Please select at least one genre.");
+            return;
+        }
+
+        //alert(checked);
+
+
+        // Create an AJAX request
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '/recommender', true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+        // Handle the response
+        xhr.onload = function () {
+            if (xhr.status === 200) {
+                // Replace the entire div with the response
+                elem.parentElement.innerHTML = xhr.responseText;
+            } else {
+                alert('Request failed. Returned status of ' + xhr.status);
+            }
+        };
+
+        // Send the request with the movie ID and the rating
+        xhr.send('checked=' + checked );
+        
+    }
+</script>
+{% endblock %}
+

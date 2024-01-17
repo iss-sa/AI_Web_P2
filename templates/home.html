@@ -1,11 +1,22 @@
 {% extends "flask_user_layout.html" %}
 {% block content %}
-    <h2>Home page</h2>
-    <p><a href={{ url_for('user.register') }}>Register</a></p>
-    <p><a href={{ url_for('user.login') }}>Sign in</a></p>
-    <p><a href={{ url_for('home_page') }}>Home page</a> (accessible to anyone)</p>
-    <p><a href={{ url_for('movies_page') }}>Movies</a> (login required)</p>
-    <p><a href={{ url_for('recommender_page') }}>Recommender</a> (login required) </p>
-    <p><a href={{ url_for('recommended_movies') }}>Recommended Movies</a> (login required) </p>
-    <p><a href={{ url_for('user.logout') }}>Sign out</a></p>
+<div class="home-menu">
+    <a class="menu-card span-2" href={{ url_for('movies_page') }}>
+        <span class="card-tag span-1 border-r flex-center">Movies</span>
+        <div class="span-2 image-full-cover" style="background: url(https://www.shutterstock.com/image-vector/cinema-film-strip-wave-reel-600nw-1422026513.jpg);
+                   filter: blur(1px);">
+        </div>
+    </a>
+    <a class="menu-card span-r-2" href={{ url_for('recommender_page') }}>
+        <span class="card-tag span-1 border-r flex-center">Recommender</span>
+        <div class="span-2 image-full-cover" style="background: url(/static/popcorn.png);">
+        </div>
+    </a>
+    <a class="menu-card span-2" href={{ url_for('recommended_movies') }}>
+        <span class="card-tag span-1 border-r flex-center">Recommended Movies</span>
+        <div class="span-2 image-full-cover" style="background: url(https://artikular.com/wp-content/uploads/2021/06/artikular-architekten-kinosaalonyx_3.jpg);
+                   filter: blur(1px);">
+        </div>
+    </a>
+</div>
 {% endblock %}
