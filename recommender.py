@@ -91,24 +91,24 @@ def movies_page():
 @app.route('/recMovies')
 @login_required  # User must be authenticated
 def recommended_movies():
-    """user_ratings = (
+    user_ratings = (
         db.session.query(MovieRatings)
         .filter(MovieRatings.user_id == current_user.id)
         .all()
     )
     # check if the user has rated movies already
-    if len(user_ratings)> 0: """ 
+    if len(user_ratings)> 0: 
         # matrix for collab_filter
-    data_m = database_pd_matrix(db)
-    picked_user = current_user.id
-    df_movies = collab_filter(picked_userid=picked_user, n=10, user_similarity_threshold=0.3, m=10, p_corr=True, matrix=data_m)
-    list_movie_ids = df_movies["movie"][:10]
-    movies = []
-    for m_id in list_movie_ids:
-        movies.append(Movie.query.get(m_id))
-        #movies.append(Movie.query.filter(Movie.id == m_id).one())
-    """else:
-        movies = Movie.query.limit(10).all()"""
+        data_m = database_pd_matrix(db)
+        picked_user = current_user.id
+        df_movies = collab_filter(picked_userid=picked_user, n=10, user_similarity_threshold=0.3, m=10, p_corr=True, matrix=data_m)
+        list_movie_ids = df_movies["movie"][:10]
+        movies = []
+        for m_id in list_movie_ids:
+            movies.append(Movie.query.get(m_id))
+            #movies.append(Movie.query.filter(Movie.id == m_id).one())
+    else:
+        movies = Movie.query.limit(10).all()
         
     URLs = []
     for m in movies:
