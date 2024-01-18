@@ -28,43 +28,29 @@
 {% block extra_js %}
 <script>
     const checkboxes = document.querySelectorAll(".genre-picker>label>input");
+    var checked = new Set();
+    $(".genre-picker>label>input").click(registerGenre);
     $("input[type='submit']").click(submitGenres);
+
+    function registerGenre(e) {
+        let checking = this.checked;
+        let name = this.getAttribute('name');
+
+        if (!checking) return checked.delete(name);
+        else if (checked.size === 3) return e.preventDefault();
+
+        checked.add(name);
+    }
 
     function submitGenres(e) {
         e.preventDefault();
-        var checked = [];
-        for (var cb of checkboxes) {
-            if (cb.checked) {
-                checked.push(cb.name);
-            }
-        }
 
-        if (!checked.length) {
+        if (!checked.size) {
             alert("Please select at least one genre.");
             return;
         }
 
-        //alert(checked);
-
-
-        // Create an AJAX request
-        var xhr = new XMLHttpRequest();
-        xhr.open('POST', '/recommender', true);
-        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-
-        // Handle the response
-        xhr.onload = function () {
-            if (xhr.status === 200) {
-                // Replace the entire div with the response
-                elem.parentElement.innerHTML = xhr.responseText;
-            } else {
-                alert('Request failed. Returned status of ' + xhr.status);
-            }
-        };
-
-        // Send the request with the movie ID and the rating
-        xhr.send('checked=' + checked );
-        
+        window.location.assign("/movies?genres=" + Array.from(checked).join(','));
     }
 </script>
 {% endblock %}

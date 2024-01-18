@@ -55,8 +55,8 @@ def recommender_page():
     genres.pop()
     genres = [genre[0] for genre in genres]
     
-    checked_genres = request.form.get('checked')
-    print("checked genres = ", checked_genres)
+    #checked_genres = request.form.get('checked')
+    #print("checked genres = ", checked_genres)
     
     return render_template("recommender.html", genres=genres)
 
@@ -67,16 +67,20 @@ def movies_page():
     # String-based templates
 
     # first 10 movies
-    movies = Movie.query.limit(10).all()
+    #movies = Movie.query.limit(10).all()
+    
+    pairs = request.query_string.split(b"&")
+    split_pairs = {kv[0]: kv[1].decode() for pair in pairs if len(kv := pair.split(b"=", 2)) == 2}
 
-    # LIEBER JULIUS: WIR WOLLEN HIER DIE GENRES HABEN VON RECOMMENDER PAGE für die query <3
-    # checked_boxes = HIER GENRE LISTE
-    # movies = Movie.query\
-    #     .filter(Movie.genres.any(MovieGenre.genre == checked_boxes[0])) \
-    #     .filter(Movie.genres.any(MovieGenre.genre == checked_boxes[1])) \
-    #     .filter(Movie.genres.any(MovieGenre.genre == checked_boxes[2])) \
-    #     .limit(20).all()
-    # DANKE!!!
+    movie_filter = Movie.query
+    if (selected_genres := split_pairs.get(b"genres")):
+        selected_genres = selected_genres.split(",")
+
+        for genre in selected_genres:
+            movie_filter = movie_filter.filter(Movie.genres.any(genre = genre))
+
+    # first 20 movies
+    movies = movie_filter.limit(20).all()
 
     URLs = []
     for m in movies:
