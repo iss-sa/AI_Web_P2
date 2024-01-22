@@ -121,7 +121,7 @@ def recommended_movies():
             URLs.append("https://www.themoviedb.org/movie/"+num)
 
     mov_url = zip(movies, URLs)
-    return render_template("movies.html", movies=mov_url)
+    return render_template("recommended_movies.html", movies=mov_url)
 
 @app.route('/rate', methods=['POST'])
 @login_required  # User must be authenticated

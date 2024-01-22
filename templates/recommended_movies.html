@@ -2,7 +2,8 @@
 {% block content %}
 <div class="container">
     <h2>Movies</h2>
-    <div><b>Make sure you rate some movies (submit button is at the bottom)</b></div>
+    <div><b>These are the movies we recommend for you!</b>
+        <b>The Recommendations are based on your movie ratings</b></div>
 
     {% for m in movies %}
     <div class="panel panel-default">
@@ -39,9 +40,7 @@
     </div>
     {% endfor %}
 
-    <form action="/recMovies" method="GET" class = "box">
-        <button type="submit"><i class="btn btn-default btn-primary"></i> Submit </button>
-    </form>
+
 </div>
 
 <script>
