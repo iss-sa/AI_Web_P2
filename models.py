@@ -30,11 +30,15 @@ class Movie(db.Model):
     links = db.relationship('MovieLinks', backref='movie', lazy=True)
     ratings = db.relationship('MovieRatings', backref='movie', lazy=True)
 
+
 class MovieGenre(db.Model):
     __tablename__ = 'movie_genres'
     id = db.Column(db.Integer, primary_key=True)
     movie_id = db.Column(db.Integer, db.ForeignKey('movies.id'), nullable=False)
     genre = db.Column(db.String(255), nullable=False, server_default='')
+
+
+#added tags, links and ratings same as in genre and movies
 
 class MovieTags(db.Model):
     __tablename__ = 'movie_tags'

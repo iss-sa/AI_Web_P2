@@ -25,6 +25,11 @@ class ConfigClass(object):
     USER_ENABLE_USERNAME = True  # Enable username authentication
     USER_REQUIRE_RETYPE_PASSWORD = True  # Simplify register form
 
+    USER_AFTER_REGISTER_ENDPOINT = 'home_page'
+    USER_AFTER_CONFIRM_ENDPOINT = 'home_page'
+    USER_AFTER_LOGIN_ENDPOINT = 'home_page'
+    USER_AFTER_LOGOUT_ENDPOINT = 'home_page'
+
 # Create Flask app
 app = Flask(__name__)
 app.config.from_object(__name__ + '.ConfigClass')  # configuration
@@ -51,6 +56,7 @@ def home_page():
 @login_required  # User must be authenticated
 def recommender_page():
     
+    #display genres
     genres = db.session.query(MovieGenre.genre).distinct().all()
     genres.pop()
     genres = [genre[0] for genre in genres]
@@ -68,20 +74,27 @@ def movies_page():
 
     # first 10 movies
     #movies = Movie.query.limit(10).all()
-    
+
+    #get tciked genres
     pairs = request.query_string.split(b"&")
     split_pairs = {kv[0]: kv[1].decode() for pair in pairs if len(kv := pair.split(b"=", 2)) == 2}
 
+    #create query
     movie_filter = Movie.query
+
+    #split
     if (selected_genres := split_pairs.get(b"genres")):
         selected_genres = selected_genres.split(",")
 
+
+        #filter by ticked genres
         for genre in selected_genres:
             movie_filter = movie_filter.filter(Movie.genres.any(genre = genre))
 
     # first 20 movies
     movies = movie_filter.limit(20).all()
 
+    # get URL for movies
     URLs = []
     for m in movies:
         for l in m.links:
@@ -95,25 +108,40 @@ def movies_page():
 @app.route('/recMovies')
 @login_required  # User must be authenticated
 def recommended_movies():
+
+    #create user rating
     user_ratings = (
         db.session.query(MovieRatings)
         .filter(MovieRatings.user_id == current_user.id)
         .all()
     )
+
     # check if the user has rated movies already
     if len(user_ratings)> 0: 
-        # matrix for collab_filter
+        
+        #create data based on db
         data_m = database_pd_matrix(db)
+
+        #current user
         picked_user = current_user.id
+
+        # matrix for collab_filter
         df_movies = collab_filter(picked_userid=picked_user, n=10, user_similarity_threshold=0.3, m=10, p_corr=True, matrix=data_m)
+
+        #get movie id
         list_movie_ids = df_movies["movie"][:10]
         movies = []
+
+        #query movies by id
         for m_id in list_movie_ids:
             movies.append(Movie.query.get(m_id))
             #movies.append(Movie.query.filter(Movie.id == m_id).one())
+
+    #if there are no ratings, just take the first 10 movies
     else:
         movies = Movie.query.limit(10).all()
         
+    #same as above, get URLs for movies
     URLs = []
     for m in movies:
         for l in m.links:
@@ -126,9 +154,14 @@ def recommended_movies():
 @app.route('/rate', methods=['POST'])
 @login_required  # User must be authenticated
 def rate():
+
+    #function to rate movies 
+    #get id rating and user id
     movieid = request.form.get('movieid')
     rating = request.form.get('rating')
     userid = current_user.id
+
+    #add rating 
     db.session.add(MovieRatings(user_id=userid, movie_id=movieid, rating=rating))
     db.session.commit()
     print("Rate {} for {} by {}".format(rating, movieid, userid))
@@ -136,6 +169,8 @@ def rate():
 
 @app.route('/static/<path:path>')
 def send_report(path):
+
+    #path to staic file
     return send_from_directory('static', path)
 
 # Start development web server

@@ -81,7 +81,7 @@ def check_and_read_data(db):
                 if count % 100 == 0:
                     print(count, " links read")
 
-        # read ratings from csv
+        # read ratings from csv and add users
         with open('data/ratings.csv', newline='', encoding='utf8') as csvfile:
             reader = csv.reader(csvfile, delimiter=',')
             count = 0
@@ -107,6 +107,8 @@ def check_and_read_data(db):
                 if count % 100 == 0:
                     print(count, " ratings read")
 
+
+#function to add users based on their ratings
 def add_rating_user(session, user_id):
     """ Adds the users from the ratings.csv file. """
 
@@ -114,6 +116,8 @@ def add_rating_user(session, user_id):
     session.add(added_user)
     session.commit()
 
+
+#read db and turn into pd dataframe
 def database_pd_matrix(db):
     data_r = ( db.session.query(MovieRatings.user_id, MovieRatings.movie_id, MovieRatings.rating, MovieRatings.timestamp)
         .all()
